@@ -16,7 +16,7 @@ const player = {
 
 let dropCounter = 0;
 let lastTime = 0;
-const dropInterval = 1000;
+let dropInterval = 1000;
 
 function createMatrix(w, h) {
     return Array.from({length: h}, () => Array(w).fill(0));
@@ -114,6 +114,7 @@ function playerReset() {
     if (collide(arena, player)) {
         arena.forEach(row => row.fill(0));
         player.score = 0;
+        dropInterval = 1000; // リセット時に落下速度を元に戻す
         updateScore();
     }
 }
@@ -124,6 +125,8 @@ function updateScore() {
         localStorage.setItem('highscore', player.score);
     }
     document.getElementById('highscore').innerText = `Best: ${localStorage.getItem('highscore') || 0}`;
+    
+    dropInterval = 1000 * Math.pow(0.9, Math.floor(player.score / 20)); // スコア20ごとに落下速度10%加速
 }
 
 function draw() {
